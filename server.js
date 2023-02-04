@@ -101,28 +101,60 @@ app.get('/api/cities', (req, res) => {
 		res.send(citiesListServer)
 
 	} catch (error) {
-		console.log('error get:', error)
-		res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get --- controller'}]});
-  	}
+		  console.log('error get:', error)
+	  	res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get --- controller'}]});
+  }
 
 })
 
 
 
+
+app.post('/api/cities/search', (req, res) => {
+
+	  const { finding } = req.body
+
+    let capitalized = finding[0].toUpperCase() + finding.substring(1)
+
+	  try{
+
+        let inFind = citiesListServer.filter((el) => el.indexOf(capitalized) > -1)
+
+        return res.send(inFind) 
+
+    }catch(error){
+        console.log('error post:', error)
+        res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
+    }
+
+})
+
+
 app.post('/api/cities', (req, res) => {
 
-	const { origen, inter, destiny } = req.body
-	try{
+	const { origen, destiny, ...rest } = req.body
+
+  let keys = Object.keys(rest)
+  /*   console.log('rest :>> ', rest);
+  console.log('keys :>> ', keys);*/
+  
+  let values = Object.values(req.body)
+  console.log('values :>> ', values); 
+
+  console.log(req.body)
+
+
+	/* try{
 
  		let originToDestiny = ArrayFlat.findIndex(el => el === origen)
 	      let latitudOrigen = ArrayFlat[originToDestiny +1]
       	let longitudOrigen = ArrayFlat[originToDestiny +2]
 
-	      let interToDestiny = ArrayFlat.findIndex(el => el === inter)
+	  let interToDestiny = ArrayFlat.findIndex(el => el === inter)
       	let latitudInter = ArrayFlat[interToDestiny +1]
 	      let longitudInter = ArrayFlat[interToDestiny +2]
 
-      	let toDestiny = ArrayFlat.findIndex(el => el === destiny)
+    let toDestiny = ArrayFlat.findIndex(el => el === destiny)
 	      let latitudDestiny = ArrayFlat[toDestiny +1]
       	let longitudDestiny = ArrayFlat[toDestiny +2]
 
@@ -137,9 +169,9 @@ app.post('/api/cities', (req, res) => {
 		return res.send({origenToInterVal, originToDestinyVal, interToDestinyVal});
 
 	} catch (error) {
-		console.log('error post:', error)
-		res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
-  	}
+		  console.log('error post:', error)
+		  res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
+  } */
 })
 
 
