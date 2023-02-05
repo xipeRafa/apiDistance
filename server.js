@@ -134,44 +134,44 @@ app.post('/api/cities', (req, res) => {
 
 	const { origen, destiny, ...rest } = req.body
 
-  let keys = Object.keys(rest)
-  /*   console.log('rest :>> ', rest);
-  console.log('keys :>> ', keys);*/
-  
-  let values = Object.values(req.body)
-  console.log('values :>> ', values); 
+  let inters = Object.values(rest)
 
-  console.log(req.body)
+	 try{
 
-
-	/* try{
-
- 		let originToDestiny = ArrayFlat.findIndex(el => el === origen)
+ 		    let originToDestiny = ArrayFlat.findIndex(el => el === origen)
 	      let latitudOrigen = ArrayFlat[originToDestiny +1]
       	let longitudOrigen = ArrayFlat[originToDestiny +2]
 
-	  let interToDestiny = ArrayFlat.findIndex(el => el === inter)
-      	let latitudInter = ArrayFlat[interToDestiny +1]
-	      let longitudInter = ArrayFlat[interToDestiny +2]
 
-    let toDestiny = ArrayFlat.findIndex(el => el === destiny)
+        let toDestiny = ArrayFlat.findIndex(el => el === destiny) 
 	      let latitudDestiny = ArrayFlat[toDestiny +1]
       	let longitudDestiny = ArrayFlat[toDestiny +2]
 
 
-	      let origenToInterVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudInter, longitudInter)  
 
-	      let originToDestinyVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudDestiny, longitudDestiny)
+	      let originToDestinyVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudDestiny, longitudDestiny) 
 
-	      let interToDestinyVal = getDistanceFromLatLonInKm(latitudInter, longitudInter, latitudDestiny, longitudDestiny) 
+        let intersKMS = {}
 
+        for (let index = 0; index < inters.length; index++) {
+            const element = inters[index];
+            intersKMS[element]
 
-		return res.send({origenToInterVal, originToDestinyVal, interToDestinyVal});
+            let indexIn = ArrayFlat.findIndex(el => el === element)
+            let latitud = ArrayFlat[indexIn +1]
+            let longitud = ArrayFlat[indexIn +2]
 
-	} catch (error) {
-		  console.log('error post:', error)
-		  res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
-  } */
+            let kms = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitud, longitud)
+            intersKMS[element]=kms
+        } 
+
+		    return res.send({originToDestinyVal, intersKMS});
+
+	  } catch (error) {
+		    console.log('error post:', error)
+		    res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
+    } 
+
 })
 
 
