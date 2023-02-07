@@ -2,17 +2,15 @@ const express = require('express');
 const colors = require('colors');
 const cors = require('cors');
 const { json } = require('body-parser');
-
-
-
-
-
-
+const morgan = require('morgan')
 
 const app = express();
 
 app.use(cors());
 app.use(json());
+app.use(morgan('tiny'))
+
+
 
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2){
     
@@ -29,12 +27,11 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2){
       let distance = R * c;  //Distance in KM
       return distance
           
-  }
+}
   
-  
-  function deg2rad(deg){
-      return deg * (Math.PI/180)
-  }
+function deg2rad(deg){
+    return deg * (Math.PI/180)
+}
 
 
 
@@ -82,63 +79,39 @@ let cities = [
   ['Aix-en-Provence', 43.529742, 5.447427]
 ]
 
-console.log(cities)
-
 
 let ArrayFlat = cities.flat()
 
 let citiesListServer = []
 
 for (let index = 0; index < cities.length; index++) {
-  const element = cities[index][0];
-  citiesListServer.push(element)
+    const element = cities[index][0];
+    citiesListServer.push(element)
 }
+
+//console.log(citiesListServer)
+
 
 
 app.get('/api/cities', (req, res) => {
 
-	try{
-		res.send(citiesListServer)
+        let zz = req._parsedUrl.search.slice(1, -1)
 
-	} catch (error) {
-		  console.log('error get:', error)
-	  	res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get --- controller'}]});
-  }
+        let by_y = zz.split('&')
 
-})
+        let findQuery = []
+     
+  
+        for (let index = 0; index < by_y.length; index++) {
+            const element = by_y[index].split('=')
+            findQuery.push(element)
+        }
 
+        let objQuery = Object.fromEntries(findQuery)
 
+        const {origen, destiny, passengers, date, ...rest } = objQuery
 
-
-app.post('/api/cities/search', (req, res) => {
-
-	  const { finding } = req.body
-
-    let capitalized = finding[0].toUpperCase() + finding.substring(1)
-
-	  try{
-
-        let inFind = citiesListServer.filter((el) => el.indexOf(capitalized) > -1)
-
-        return res.send(inFind) 
-
-    }catch(error){
-        console.log('error post:', error)
-        res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
-    }
-
-})
-
-
-app.post('/api/cities', (req, res) => {
-
-	const { origen, destiny, ...rest } = req.body
-
-  let inters = Object.values(rest)
-
-	 try{
-
- 		    let originToDestiny = ArrayFlat.findIndex(el => el === origen)
+        let originToDestiny = ArrayFlat.findIndex(el => el === origen)
 	      let latitudOrigen = ArrayFlat[originToDestiny +1]
       	let longitudOrigen = ArrayFlat[originToDestiny +2]
 
@@ -150,6 +123,8 @@ app.post('/api/cities', (req, res) => {
 
 
 	      let originToDestinyVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudDestiny, longitudDestiny) 
+        
+        let inters = Object.values(rest)
 
         let intersKMS = {}
 
@@ -165,14 +140,44 @@ app.post('/api/cities', (req, res) => {
             intersKMS[element]=kms
         } 
 
-		    return res.send({originToDestinyVal, intersKMS});
+        let dp = {passengers, date}
+        let post = {origen, destiny}
+
+    
+
+    try{
+
+            return res.send({originToDestinyVal, intersKMS, dp, post})
 
 	  } catch (error) {
-		    console.log('error post:', error)
-		    res.status(500).json({ ok: false, errors:[{msg: 'Bad server post --- controller'}]});
-    } 
+		    console.log('error get:', error)
+	  	    res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get --- controller'}]});
+    }
 
 })
+
+
+
+
+app.post('/api/cities/search', (req, res) => {
+    const { finding } = req.body
+  
+
+    let capitalized = finding[0].toUpperCase() + finding.substring(1)
+  
+    try{
+
+        let inFind = citiesListServer.filter((el) => el.indexOf(capitalized) > -1)
+
+        return res.send(inFind) 
+
+    }catch(error){
+        console.log('error post:', error)
+        res.status(500).json({ ok: false, errors:[{msg: 'Bad server Post --- controller'}]});
+    }
+
+})
+
 
 
 const PORT = 7000;
