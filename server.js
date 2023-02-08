@@ -125,12 +125,6 @@ app.get('/api/cities', (req, res) => {
 
         let originToDestiny = ArrayFlat.findIndex(el => el === origen)
 
-        if(originToDestiny === -1){ 
-            res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get'}]});
-            console.log('originToDestiny :>> ', originToDestiny);
-            return 
-        }
-
 	    let latitudOrigen = ArrayFlat[originToDestiny +1]
       	let longitudOrigen = ArrayFlat[originToDestiny +2]
 
@@ -139,6 +133,11 @@ app.get('/api/cities', (req, res) => {
 	    let latitudDestiny = ArrayFlat[toDestiny +1]
       	let longitudDestiny = ArrayFlat[toDestiny +2]
 
+        
+        if(originToDestiny === -1 || toDestiny === -1){ 
+            res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get'}]});
+            return 
+        }
 
 
 	    let originToDestinyVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudDestiny, longitudDestiny) 
@@ -162,8 +161,6 @@ app.get('/api/cities', (req, res) => {
         let post = {origen, destiny}
         let dp = {passengers, date}
 
-    
-
     try{
 
             return res.send({originToDestinyVal, intersKMS, dp, post})
@@ -184,13 +181,14 @@ app.get('/api/cities', (req, res) => {
 app.post('/api/cities/search', (req, res) => {
 
     const { finding } = req.body
+
     try{
         
         let inFind = citiesListServer.filter((el) => el.indexOf(finding) > -1)
         console.log('finding :>> ', inFind);
 
-        if(finding.length>4 && inFind.length === 0){ 
-            res.status(500).json({ ok: false, errors:[{msg: 'city never can not find it'}]});
+        if(finding.length > 4 && inFind.length === 0){ 
+            res.status(500).json({ ok: false, errors:[{msg: 'city never can not find it, in server'}]});
             //res.status(500).json({error:{msg: 'city never can not find it'}});
             return 
         }
@@ -203,6 +201,8 @@ app.post('/api/cities/search', (req, res) => {
     }
 
 })
+
+
 
 
 
