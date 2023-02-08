@@ -107,7 +107,7 @@ let ArrayFlat = cities.flat()
 
 app.get('/api/cities', (req, res) => {
 
-        if(req._parsedUrl.search?.slice.slice(-1) !== '&'){
+        if(req._parsedUrl.search?.slice(-1) !== '&'){
             res.status(500).json({ ok: false, errors:[{msg: 'Server msg: broken link'}]});
             return
         }
