@@ -186,7 +186,7 @@ app.post('/api/cities/search', (req, res) => {
         
         let inFind = citiesListServer.filter((el) => el.indexOf(finding) > -1)
 
-        if(finding.length > 4 && inFind.length === 0){ 
+        if(finding.length > 6 && inFind.length === 0){ 
             res.status(500).json({ ok: false, errors:[{msg: 'city never can not find it, in server'}]});
             return 
         }
