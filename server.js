@@ -82,7 +82,7 @@ let cities = [
 
 
 for (let index = 0; index < cities.length; index++) {
-    cities[index][0] = cities[index][0].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    cities[index][0] = cities[index][0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(" ").join("_")
 }
 
 console.log('cities Clean:>> ', cities);
@@ -174,13 +174,22 @@ app.get('/api/cities', (req, res) => {
 
 app.post('/api/cities/search', (req, res) => {
     const { finding } = req.body
-  
+    console.log("🚀 ~ file: server.js:177 ~ app.post ~ finding", finding)
 
-    let capitalized = finding[0].toUpperCase() + finding.substring(1)
+
+
+
+    let capitalized = [finding]
+
+    if(finding.includes('_')){
+        let i = finding.indexOf("_") +1
+        let letter = finding[i]
+        let up = finding.replace(letter, letter.toUpperCase())
+        capitalized.splice(0, 1, up)
+    }
   
     try{
-
-        let inFind = citiesListServer.filter((el) => el.indexOf(capitalized) > -1)
+        let inFind = citiesListServer.filter((el) => el.indexOf(capitalized[0]) > -1)
 
         return res.send(inFind) 
 
