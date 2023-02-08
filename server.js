@@ -133,7 +133,7 @@ app.get('/api/cities', (req, res) => {
 	    let latitudDestiny = ArrayFlat[toDestiny +1]
       	let longitudDestiny = ArrayFlat[toDestiny +2]
 
-        
+
         if(originToDestiny === -1 || toDestiny === -1){ 
             res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get'}]});
             return 
@@ -185,11 +185,9 @@ app.post('/api/cities/search', (req, res) => {
     try{
         
         let inFind = citiesListServer.filter((el) => el.indexOf(finding) > -1)
-        console.log('finding :>> ', inFind);
 
         if(finding.length > 4 && inFind.length === 0){ 
             res.status(500).json({ ok: false, errors:[{msg: 'city never can not find it, in server'}]});
-            //res.status(500).json({error:{msg: 'city never can not find it'}});
             return 
         }
 
