@@ -107,7 +107,7 @@ let ArrayFlat = cities.flat()
 
 app.get('/api/cities', (req, res) => {
 
-        let zz = req._parsedUrl.search.slice(1, -1)
+        let zz = req._parsedUrl.search?.slice(1, -1)
 
         let by_y = zz.split('&')
 
@@ -115,7 +115,7 @@ app.get('/api/cities', (req, res) => {
      
   
         for (let index = 0; index < by_y.length; index++) {
-            const element = by_y[index].split('=')
+            const element = by_y[index]?.split('=')
             findQuery.push(element)
         }
 
@@ -124,7 +124,13 @@ app.get('/api/cities', (req, res) => {
         const {origen, destiny, passengers, date, ...rest } = objQuery
 
         let originToDestiny = ArrayFlat.findIndex(el => el === origen)
-        console.log('originToDestiny :>> ', originToDestiny);
+
+        if(originToDestiny === -1){ 
+            res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get'}]});
+            console.log('originToDestiny :>> ', originToDestiny);
+            return 
+        }
+
 	    let latitudOrigen = ArrayFlat[originToDestiny +1]
       	let longitudOrigen = ArrayFlat[originToDestiny +2]
 
@@ -153,8 +159,8 @@ app.get('/api/cities', (req, res) => {
             intersKMS[element]=kms
         } 
 
-        let dp = {passengers, date}
         let post = {origen, destiny}
+        let dp = {passengers, date}
 
     
 
@@ -172,24 +178,22 @@ app.get('/api/cities', (req, res) => {
 
 
 
+
+
+
 app.post('/api/cities/search', (req, res) => {
+
     const { finding } = req.body
-    console.log("🚀 ~ file: server.js:177 ~ app.post ~ finding", finding)
-
-
-
-
-    let capitalized = [finding]
-
-    if(finding.includes('_')){
-        let i = finding.indexOf("_") +1
-        let letter = finding[i]
-        let up = finding.replace(letter, letter.toUpperCase())
-        capitalized.splice(0, 1, up)
-    }
-  
     try{
-        let inFind = citiesListServer.filter((el) => el.indexOf(capitalized[0]) > -1)
+        
+        let inFind = citiesListServer.filter((el) => el.indexOf(finding) > -1)
+        console.log('finding :>> ', inFind);
+
+        if(finding.length>4 && inFind.length === 0){ 
+            res.status(500).json({ ok: false, errors:[{msg: 'city never can not find it'}]});
+            //res.status(500).json({error:{msg: 'city never can not find it'}});
+            return 
+        }
 
         return res.send(inFind) 
 
