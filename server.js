@@ -107,6 +107,11 @@ let ArrayFlat = cities.flat()
 
 app.get('/api/cities', (req, res) => {
 
+        if(req._parsedUrl.search?.slice.slice(-1) !== '&'){
+            res.status(500).json({ ok: false, errors:[{msg: 'Server msg: broken link'}]});
+            return
+        }
+
         let zz = req._parsedUrl.search?.slice(1, -1)
 
         let by_y = zz.split('&')
@@ -135,7 +140,7 @@ app.get('/api/cities', (req, res) => {
 
 
         if(originToDestiny === -1 || toDestiny === -1){ 
-            res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get'}]});
+            res.status(500).json({ ok: false, errors:[{msg: 'Server msg: broken link'}]});
             return 
         }
 
