@@ -80,16 +80,28 @@ let cities = [
 ]
 
 
-let ArrayFlat = cities.flat()
+
+for (let index = 0; index < cities.length; index++) {
+    cities[index][0] = cities[index][0].normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+}
+
+console.log('cities Clean:>> ', cities);
+
+
+
 
 let citiesListServer = []
 
 for (let index = 0; index < cities.length; index++) {
-    const element = cities[index][0];
+    const element = cities[index][0]
     citiesListServer.push(element)
 }
 
-//console.log(citiesListServer)
+
+
+let ArrayFlat = cities.flat()
+
+
 
 
 
@@ -112,17 +124,18 @@ app.get('/api/cities', (req, res) => {
         const {origen, destiny, passengers, date, ...rest } = objQuery
 
         let originToDestiny = ArrayFlat.findIndex(el => el === origen)
-	      let latitudOrigen = ArrayFlat[originToDestiny +1]
+        console.log('originToDestiny :>> ', originToDestiny);
+	    let latitudOrigen = ArrayFlat[originToDestiny +1]
       	let longitudOrigen = ArrayFlat[originToDestiny +2]
 
 
         let toDestiny = ArrayFlat.findIndex(el => el === destiny) 
-	      let latitudDestiny = ArrayFlat[toDestiny +1]
+	    let latitudDestiny = ArrayFlat[toDestiny +1]
       	let longitudDestiny = ArrayFlat[toDestiny +2]
 
 
 
-	      let originToDestinyVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudDestiny, longitudDestiny) 
+	    let originToDestinyVal = getDistanceFromLatLonInKm(latitudOrigen, longitudOrigen, latitudDestiny, longitudDestiny) 
         
         let inters = Object.values(rest)
 
@@ -149,7 +162,7 @@ app.get('/api/cities', (req, res) => {
 
             return res.send({originToDestinyVal, intersKMS, dp, post})
 
-	  } catch (error) {
+	} catch (error) {
 		    console.log('error get:', error)
 	  	    res.status(500).json({ ok: false, errors:[{msg: 'Bad server Get --- controller'}]});
     }
